@@ -3,11 +3,12 @@ import { ApiService } from './api.service';
 import { LoginComponent } from './login.component';
 import { UsersComponent } from './user.component';
 import { HeaderComponent } from './header.component';
+import { BoardsComponent } from './boards.component';
 
 @Component({
   selector: 'ngx-retro-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LoginComponent, UsersComponent, HeaderComponent],
+  imports: [LoginComponent, UsersComponent, HeaderComponent, BoardsComponent],
   styles: `
     :host {
       display: flex;
@@ -22,10 +23,9 @@ import { HeaderComponent } from './header.component';
       <h1 style="text-align: center">Retrospective</h1>
     </div>
     <ngx-header />
-    <ngx-users />
     @if (api.user()) {
-      <input type="text" #boardInput />
-      <button (click)="addBoard(boardInput.value)">Add board</button>
+      <ngx-users />
+      <ngx-boards />
     } @else {
       <ngx-login />
     }
@@ -33,8 +33,4 @@ import { HeaderComponent } from './header.component';
 })
 export class RetroComponent {
   readonly api = inject(ApiService);
-
-  addBoard(name: string) {
-    this.api.addBoard(name);
-  }
 }

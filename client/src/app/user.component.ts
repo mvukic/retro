@@ -39,6 +39,7 @@ export class UserComponent {
     }
   `,
   template: `
+    Users:
     @for (user of api.users(); track user.id) {
       <ngx-user [user]="user" [isCurrentUser]="api.user()?.id === user.id" />
     }

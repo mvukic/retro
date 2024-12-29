@@ -5,7 +5,12 @@ import { Board, BoardItem, RequestType, ResponseType, User } from './types';
 export class ApiService {
   readonly user = signal<User | undefined>(undefined);
   readonly users = signal<User[]>([]);
-  readonly boards = signal<Board[]>([]);
+  readonly boards = signal<Board[]>([
+    { id: '1', name: 'Board 1', items: [], createdAt: Date.now() },
+    { id: '2', name: 'Board 2', items: [], createdAt: Date.now() },
+    { id: '3', name: 'Board 3', items: [], createdAt: Date.now() },
+    { id: '4', name: 'Board 4', items: [], createdAt: Date.now() },
+  ]);
   #ws: WebSocket | null = null;
 
   #setupConnection() {
@@ -78,7 +83,7 @@ export class ApiService {
   #handleAddUserCurrent(id: string, name: string, users: User[], boards: Board[]) {
     this.user.set({ id, name });
     this.users.set(users);
-    this.boards.set(boards);
+    // this.boards.set(boards);
   }
 
   #handleUserRemove(id: string) {
