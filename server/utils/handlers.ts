@@ -44,3 +44,8 @@ export async function handleUpdateBoardItem(boardId: string, itemId: string, con
   const item = await boardsDb.updateBoardItem(boardId, itemId, content);
   notifyAll({ type: "board-item-update-response", payload: { boardId, item } });
 }
+
+export async function handleVoteBoardItem(boardId: string, itemId: string, vote: "up" | "down") {
+  const votes = await boardsDb.voteBoardItem(boardId, itemId, vote);
+  notifyAll({ type: "board-item-vote-response", payload: { boardId, itemId, votes } });
+}

@@ -8,29 +8,32 @@ Deno.serve((req) => {
 
   const { socket, response } = Deno.upgradeWebSocket(req);
 
-  socket.addEventListener("message", (event: MessageEvent<string>) => {
+  socket.addEventListener("message", async (event: MessageEvent<string>) => {
     const data = JSON.parse(event.data) as RequestType;
     switch (data.type) {
       case "user-add-request":
-        handler.handleAddUser(socket, data.payload.name);
+        await handler.handleAddUser(socket, data.payload.name);
         break;
       case "board-add-request":
-        handler.handleAddBoard(data.payload.name);
+        await handler.handleAddBoard(data.payload.name);
         break;
       case "board-update-request":
-        handler.handleUpdateBoard(data.payload.boardId, data.payload.name);
+        await handler.handleUpdateBoard(data.payload.boardId, data.payload.name);
         break;
       case "board-remove-request":
-        handler.handleRemoveBoard(data.payload.id);
+        await handler.handleRemoveBoard(data.payload.id);
         break;
       case "board-item-add-request":
-        handler.handleAddBoardItem(data.payload.boardId, data.payload.content, data.payload.type);
+        await handler.handleAddBoardItem(data.payload.boardId, data.payload.content, data.payload.type);
         break;
       case "board-item-remove-request":
-        handler.handleRemoveBoardItem(data.payload.boardId, data.payload.itemId);
+        await handler.handleRemoveBoardItem(data.payload.boardId, data.payload.itemId);
         break;
       case "board-item-update-request":
-        handler.handleUpdateBoardItem(data.payload.boardId, data.payload.itemId, data.payload.content);
+        await handler.handleUpdateBoardItem(data.payload.boardId, data.payload.itemId, data.payload.content);
+        break;
+      case "board-item-vote-request":
+        await handler.handleVoteBoardItem(data.payload.boardId, data.payload.itemId, data.payload.vote);
         break;
     }
   });

@@ -10,6 +10,7 @@ export type BoardRemoveRequest = { type: "board-remove-request"; payload: { id: 
 export type BoardItemAddRequest = { type: "board-item-add-request"; payload: { boardId: string; content: string; type: BoardItemType } };
 export type BoardItemRemoveRequest = { type: "board-item-remove-request"; payload: { boardId: string; itemId: string } };
 export type BoardItemUpdateRequest = { type: "board-item-update-request"; payload: { boardId: string; itemId: string; content?: string } };
+export type BoardItemVoteRequest = { type: "board-item-vote-request"; payload: { boardId: string; itemId: string; vote: "up" | "down" } };
 
 export type RequestType =
   | UserAddRequest
@@ -18,7 +19,8 @@ export type RequestType =
   | BoardRemoveRequest
   | BoardItemAddRequest
   | BoardItemRemoveRequest
-  | BoardItemUpdateRequest;
+  | BoardItemUpdateRequest
+  | BoardItemVoteRequest;
 
 export type UserAddResponseAllResponse = { type: "user-add-response-all-response"; payload: { id: string; name: string } };
 export type UserAddResponseCurrentResponse = {
@@ -32,6 +34,7 @@ export type BoardRemoveResponse = { type: "board-remove-response"; payload: { id
 export type BoardItemAddResponse = { type: "board-item-add-response"; payload: { boardId: string; item: BoardItem } };
 export type BoardItemUpdateResponse = { type: "board-item-remove-response"; payload: { boardId: string; itemId: string } };
 export type BoardItemRemoveResponse = { type: "board-item-update-response"; payload: { boardId: string; item: BoardItem } };
+export type BoardItemVoteResponse = { type: "board-item-vote-response"; payload: { boardId: string; itemId: string; votes: number } };
 
 export type ResponseType =
   | UserAddResponseAllResponse
@@ -42,7 +45,8 @@ export type ResponseType =
   | BoardRemoveResponse
   | BoardItemAddResponse
   | BoardItemUpdateResponse
-  | BoardItemRemoveResponse;
+  | BoardItemRemoveResponse
+  | BoardItemVoteResponse;
 
 export type BoardItemType = "actionPoint" | "improvement" | "keepDoing";
 
@@ -51,6 +55,7 @@ export type BoardItem = {
   content: string;
   type: BoardItemType;
   createdAt: number;
+  votes: number;
 };
 
 export type Board = {

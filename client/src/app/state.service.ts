@@ -5,6 +5,7 @@ import {
   BoardItemAddResponse,
   BoardItemRemoveResponse,
   BoardItemUpdateResponse,
+  BoardItemVoteResponse,
   BoardRemoveResponse,
   BoardUpdateResponse,
   ResponseType,
@@ -46,6 +47,7 @@ export class StateService {
       'board-item-add-response': this.#handleBoardItemAdd.bind(this),
       'board-item-remove-response': this.#handleBoardItemRemove.bind(this),
       'board-item-update-response': this.#handleBoardItemUpdate.bind(this),
+      'board-item-vote-response': this.#handleBoardItemVote.bind(this),
     } as const;
     this.#api.onMessage((event) => {
       const data = JSON.parse(event.data) as ResponseType;
@@ -123,6 +125,28 @@ export class StateService {
             items: board.items.map((item) => {
               if (item.id === updatedItem.id) {
                 return { ...item, content: updatedItem.content };
+              } else {
+                return item;
+              }
+            }),
+          };
+        } else {
+          return board;
+        }
+      });
+    });
+  }
+
+  #handleBoardItemVote(event: BoardItemVoteResponse) {
+    const { boardId, itemId, votes } = event.payload;
+    this.boards.update((boards) => {
+      return boards.map((board) => {
+        if (board.id === boardId) {
+          return {
+            ...board,
+            items: board.items.map((item) => {
+              if (item.id === itemId) {
+                return { ...item, votes };
               } else {
                 return item;
               }

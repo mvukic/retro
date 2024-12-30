@@ -35,4 +35,9 @@ export class SenderService {
     const request: RequestType = { type: 'board-item-update-request', payload: { boardId, itemId, content } };
     this.#api.send(request);
   }
+
+  voteBoardItem(boardId: string, itemId: string, vote: 'up' | 'down') {
+    const request: RequestType = { type: 'board-item-vote-request', payload: { boardId, itemId, vote } };
+    this.#api.send(request);
+  }
 }

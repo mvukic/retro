@@ -32,7 +32,7 @@ export async function removeBoard(id: string): Promise<string> {
 
 export async function addBoardItem(boardId: string, content: string, type: BoardItemType): Promise<BoardItem> {
   const id = crypto.randomUUID();
-  const item: BoardItem = { id, content, type, createdAt: Date.now() };
+  const item: BoardItem = { id, content, type, createdAt: Date.now(), votes: 0 };
   const board = db.boards.get(boardId)!;
   board.items.push(item);
   return item;
@@ -50,4 +50,12 @@ export async function updateBoardItem(boardId: string, itemId: string, content?:
   const item = board.items[index];
   board.items[index] = { ...item, content: content ?? item.content };
   return board.items[index];
+}
+
+export async function voteBoardItem(boardId: string, itemId: string, vote: "up" | "down"): Promise<number> {
+  const board = db.boards.get(boardId)!;
+  const index = board.items.findIndex((item) => item.id === itemId);
+  const item = board.items[index];
+  board.items[index] = { ...item, votes: item.votes + (vote === "up" ? 1 : -1) };
+  return board.items[index].votes;
 }
