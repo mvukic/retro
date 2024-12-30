@@ -15,19 +15,27 @@ export const db = client.db("retro_db");
 export const boards = db.collection<Board>("boards");
 
 export async function getBoards(): Promise<Board[]> {
-  return null!;
+  return boards.find().toArray();
 }
 
 export async function addBoard(name: string): Promise<Board> {
-  return null!;
+  const board: Board = {
+    id: crypto.randomUUID(),
+    name,
+    items: [],
+    createdAt: Date.now(),
+  };
+  await boards.insertOne(board);
+  return board;
 }
 
 export async function updateBoard(id: string, name: string): Promise<void> {
-  return null!;
+  await boards.updateOne({ id: id }, { $set: { name: name } });
 }
 
 export async function removeBoard(id: string): Promise<string> {
-  return null!;
+  await boards.deleteOne({ id: id });
+  return id;
 }
 
 export async function addBoardItem(boardId: string, content: string, type: BoardItemType): Promise<BoardItem> {
