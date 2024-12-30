@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
   `,
   template: `
     <label for="name">Name:</label>
-    <input name="name" type="text" [(ngModel)]="name" />
+    <input name="name" type="text" [(ngModel)]="name" autocomplete="off" />
     <button (click)="login()" [disabled]="!hasName()">Login</button>
   `,
 })

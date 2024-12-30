@@ -23,7 +23,7 @@ import { StateService } from './state.service';
     }
   `,
   template: `
-    <ngx-boards-list />
+    <ngx-boards-list style="flex: 0 0 250px" />
     @if (state.hasSelectedBoard()) {
       <ngx-board [board]="state.selectedBoard()!" />
     } @else {

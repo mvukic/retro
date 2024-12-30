@@ -14,7 +14,6 @@ import { BoardEditDialog } from './board-edit-dialog.component';
       flex-direction: column;
       gap: 2px;
       overflow: hidden;
-      width: 200px;
     }
     .items {
       display: flex;
@@ -25,6 +24,7 @@ import { BoardEditDialog } from './board-edit-dialog.component';
         display: flex;
         flex-direction: row;
         gap: 3px;
+        padding-left: 5px;
         > span.selected {
           background-color: #ccc;
         }

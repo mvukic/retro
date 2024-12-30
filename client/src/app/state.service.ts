@@ -37,15 +37,15 @@ export class StateService {
 
   #setupListeners() {
     const handlers = {
-      'user-add-response-all-response': this.#handleAddUserAll,
-      'user-add-response-current-response': this.#handleAddUserCurrent,
-      'user-remove-response': this.#handleUserRemove,
-      'board-add-response': this.#handleBoardAdd,
-      'board-update-response': this.#handleBoardUpdate,
-      'board-remove-response': this.#handleBoardRemove,
-      'board-item-add-response': this.#handleBoardItemAdd,
-      'board-item-remove-response': this.#handleBoardItemRemove,
-      'board-item-update-response': this.#handleBoardItemUpdate,
+      'user-add-response-all-response': this.#handleAddUserAll.bind(this),
+      'user-add-response-current-response': this.#handleAddUserCurrent.bind(this),
+      'user-remove-response': this.#handleUserRemove.bind(this),
+      'board-add-response': this.#handleBoardAdd.bind(this),
+      'board-update-response': this.#handleBoardUpdate.bind(this),
+      'board-remove-response': this.#handleBoardRemove.bind(this),
+      'board-item-add-response': this.#handleBoardItemAdd.bind(this),
+      'board-item-remove-response': this.#handleBoardItemRemove.bind(this),
+      'board-item-update-response': this.#handleBoardItemUpdate.bind(this),
     } as const;
     this.#api.onMessage((event) => {
       const data = JSON.parse(event.data) as ResponseType;
