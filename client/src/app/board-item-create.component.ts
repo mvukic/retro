@@ -3,6 +3,7 @@ import { BoardItem, BoardItemType } from './types';
 import { StateService } from './state.service';
 import { FormsModule } from '@angular/forms';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import { SenderService } from './sender.service';
 
 @Component({
   selector: 'ngx-board-item-create',
@@ -34,6 +35,7 @@ import { CdkTextareaAutosize } from '@angular/cdk/text-field';
   `,
 })
 export class BoardItemCreateComponent {
+  #sender = inject(SenderService);
   #state = inject(StateService);
   #boardId = this.#state.selectedBoardId()!;
 
@@ -43,7 +45,7 @@ export class BoardItemCreateComponent {
   protected readonly content = signal('');
 
   save() {
-    this.#state.addBoardItem(this.#boardId, this.content(), this.type());
+    this.#sender.addBoardItem(this.#boardId, this.content(), this.type());
     this.content.set('');
   }
 }

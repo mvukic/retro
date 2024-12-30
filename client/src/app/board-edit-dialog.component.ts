@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { StateService } from './state.service';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Board } from './types';
+import { SenderService } from './sender.service';
 
 @Component({
   selector: 'ngx-board-edit-dialog',
@@ -35,19 +35,19 @@ import { Board } from './types';
   `,
 })
 export class BoardEditDialog {
-  #state = inject(StateService);
+  #sender = inject(SenderService);
   protected readonly ref = inject(DialogRef);
   protected readonly data = inject<Board>(DIALOG_DATA);
 
   protected readonly name = signal(this.data.name);
 
   protected update() {
-    this.#state.updateBoard(this.data.id, this.name());
+    this.#sender.updateBoard(this.data.id, this.name());
     this.ref.close();
   }
 
   protected delete() {
-    this.#state.removeBoard(this.data.id);
+    this.#sender.removeBoard(this.data.id);
     this.ref.close();
   }
 }

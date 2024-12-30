@@ -3,6 +3,7 @@ import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { StateService } from './state.service';
 import { BoardItem } from './types';
 import { FormsModule } from '@angular/forms';
+import { SenderService } from './sender.service';
 
 @Component({
   selector: 'ngx-board-item-edit',
@@ -41,6 +42,7 @@ import { FormsModule } from '@angular/forms';
   `,
 })
 export class BoardItemEditComponent {
+  #sender = inject(SenderService);
   #state = inject(StateService);
   #boardId = this.#state.selectedBoardId()!;
 
@@ -48,10 +50,10 @@ export class BoardItemEditComponent {
   readonly copy = linkedSignal(this.item);
 
   update() {
-    this.#state.updateBoardItem(this.#boardId, this.item().id, this.copy().content);
+    this.#sender.updateBoardItem(this.#boardId, this.item().id, this.copy().content);
   }
 
   delete() {
-    this.#state.removeBoardItem(this.#boardId, this.item()!.id);
+    this.#sender.removeBoardItem(this.#boardId, this.item()!.id);
   }
 }

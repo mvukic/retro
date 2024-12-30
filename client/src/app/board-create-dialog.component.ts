@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { StateService } from './state.service';
 import { DialogRef } from '@angular/cdk/dialog';
+import { SenderService } from './sender.service';
 
 @Component({
   selector: 'ngx-board-create-dialog',
@@ -31,13 +31,13 @@ import { DialogRef } from '@angular/cdk/dialog';
   `,
 })
 export class BoardCreateDialog {
-  #state = inject(StateService);
+  #sender = inject(SenderService);
   protected readonly ref = inject(DialogRef);
 
   protected readonly name = signal('');
 
   protected create() {
-    this.#state.addBoard(this.name());
+    this.#sender.addBoard(this.name());
     this.ref.close();
   }
 }

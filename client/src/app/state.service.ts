@@ -1,8 +1,23 @@
-import { computed, Injectable, signal } from '@angular/core';
-import { Board, BoardItem, BoardItemType, RequestType, ResponseType, User } from './types';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import {
+  Board,
+  BoardAddResponse,
+  BoardItemAddResponse,
+  BoardItemRemoveResponse,
+  BoardItemUpdateResponse,
+  BoardRemoveResponse,
+  BoardUpdateResponse,
+  ResponseType,
+  User,
+  UserAddResponseAllResponse,
+  UserAddResponseCurrentResponse,
+  UserRemoveResponse,
+} from './types';
+import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class StateService {
+  #api = inject(ApiService);
   readonly user = signal<User | undefined>(undefined);
   readonly hasUser = computed(() => !!this.user());
   readonly users = signal<User[]>([]);
@@ -12,123 +27,72 @@ export class StateService {
   readonly selectedBoard = computed(() => this.boards().find((b) => b.id === this.selectedBoardId()));
   readonly hasSelectedBoard = computed(() => !!this.selectedBoard());
 
-  #ws: WebSocket | null = null;
-
-  #setupConnection() {
-    this.#ws = new WebSocket('ws://localhost:8000');
-  }
-
   login(name: string) {
-    this.#setupConnection();
-    const request: RequestType = { type: 'user-add-request', payload: { name } };
-    this.#ws?.addEventListener('open', () => {
-      this.#send(request);
+    this.#api.connect();
+    this.#api.onOpen(() => {
+      this.#api.send({ type: 'user-add-request', payload: { name } });
       this.#setupListeners();
     });
   }
 
-  addBoard(name: string) {
-    const request: RequestType = { type: 'board-add-request', payload: { name } };
-    this.#send(request);
-  }
-
-  updateBoard(boardId: string, name: string) {
-    const request: RequestType = { type: 'board-update-request', payload: { boardId, name } };
-    this.#send(request);
-  }
-
-  removeBoard(boardId: string) {
-    const request: RequestType = { type: 'board-remove-request', payload: { id: boardId } };
-    this.#send(request);
-  }
-
-  addBoardItem(boardId: string, content: string, type: BoardItemType) {
-    const request: RequestType = { type: 'board-item-add-request', payload: { boardId, content, type } };
-    this.#send(request);
-  }
-
-  removeBoardItem(boardId: string, itemId: string) {
-    const request: RequestType = { type: 'board-item-remove-request', payload: { boardId, itemId } };
-    this.#send(request);
-  }
-
-  updateBoardItem(boardId: string, itemId: string, content?: string) {
-    const request: RequestType = { type: 'board-item-update-request', payload: { boardId, itemId, content } };
-    this.#send(request);
-  }
-
   #setupListeners() {
-    this.#ws?.addEventListener('message', (event) => {
+    const handlers = {
+      'user-add-response-all-response': this.#handleAddUserAll,
+      'user-add-response-current-response': this.#handleAddUserCurrent,
+      'user-remove-response': this.#handleUserRemove,
+      'board-add-response': this.#handleBoardAdd,
+      'board-update-response': this.#handleBoardUpdate,
+      'board-remove-response': this.#handleBoardRemove,
+      'board-item-add-response': this.#handleBoardItemAdd,
+      'board-item-remove-response': this.#handleBoardItemRemove,
+      'board-item-update-response': this.#handleBoardItemUpdate,
+    } as const;
+    this.#api.onMessage((event) => {
       const data = JSON.parse(event.data) as ResponseType;
-      switch (data.type) {
-        case 'user-add-response-all-response':
-          this.#handleAddUserAll(data.payload.id, data.payload.name);
-          break;
-        case 'user-add-response-current-response':
-          this.#handleAddUserCurrent(data.payload.id, data.payload.name, data.payload.users, data.payload.boards);
-          break;
-        case 'user-remove-response':
-          this.#handleUserRemove(data.payload.id);
-          break;
-        case 'board-add-response':
-          this.#handleBoardAdd(data.payload.board);
-          break;
-        case 'board-update-response':
-          this.#handleBoardUpdate(data.payload.boardId, data.payload.name);
-          break;
-        case 'board-remove-response':
-          this.#handleBoardRemove(data.payload.id);
-          break;
-        case 'board-item-add-response':
-          this.#handleBoardItemAdd(data.payload.boardId, data.payload.item);
-          break;
-        case 'board-item-remove-response':
-          this.#handleBoardItemRemove(data.payload.boardId, data.payload.itemId);
-          break;
-        case 'board-item-update-response':
-          this.#handleBoardItemUpdate(data.payload.boardId, data.payload.item);
-          break;
-      }
+      // @ts-ignore
+      handlers[data.type](data);
     });
-    this.#ws?.addEventListener('close', () => {
-      this.#handleLogout();
-    });
+    this.#api.onClose(() => this.#handleClose());
   }
 
-  #handleAddUserAll(id: string, name: string) {
+  #handleAddUserAll(event: UserAddResponseAllResponse) {
+    const { id, name } = event.payload;
     this.users.update((users) => [...users, { id, name }]);
   }
 
-  #handleAddUserCurrent(id: string, name: string, users: User[], boards: Board[]) {
+  #handleAddUserCurrent(event: UserAddResponseCurrentResponse) {
+    const { id, name, users, boards } = event.payload;
     this.user.set({ id, name });
     this.users.set(users);
     this.boards.set(boards);
   }
 
-  #handleUserRemove(id: string) {
+  #handleUserRemove(event: UserRemoveResponse) {
+    const { id } = event.payload;
     this.users.update((users) => users.filter((user) => user.id !== id));
   }
 
-  #handleBoardAdd(board: Board) {
+  #handleBoardAdd(event: BoardAddResponse) {
+    const { board } = event.payload;
     this.boards.update((boards) => [...boards, board]);
   }
 
-  #handleBoardUpdate(boardId: string, name: string) {
+  #handleBoardUpdate(event: BoardUpdateResponse) {
+    const { boardId, name } = event.payload;
     this.boards.update((boards) => boards.map((board) => (board.id === boardId ? { ...board, name } : board)));
   }
 
-  #handleBoardRemove(id: string) {
+  #handleBoardRemove(event: BoardRemoveResponse) {
+    const { id } = event.payload;
     this.boards.update((boards) => boards.filter((board) => board.id !== id));
   }
 
-  #handleBoardItemAdd(boardId: string, item: BoardItem) {
+  #handleBoardItemAdd(event: BoardItemAddResponse) {
+    const { boardId, item } = event.payload;
     this.boards.update((boards) => {
       return boards.map((board) => {
         if (board.id === boardId) {
-          return {
-            ...board,
-            items: [...board.items, item],
-          };
+          return { ...board, items: [...board.items, item] };
         } else {
           return board;
         }
@@ -136,14 +100,12 @@ export class StateService {
     });
   }
 
-  #handleBoardItemRemove(boardId: string, itemId: string) {
+  #handleBoardItemRemove(event: BoardItemUpdateResponse) {
+    const { boardId, itemId } = event.payload;
     this.boards.update((boards) => {
       return boards.map((board) => {
         if (board.id === boardId) {
-          return {
-            ...board,
-            items: board.items.filter((item) => item.id !== itemId),
-          };
+          return { ...board, items: board.items.filter((item) => item.id !== itemId) };
         } else {
           return board;
         }
@@ -151,7 +113,8 @@ export class StateService {
     });
   }
 
-  #handleBoardItemUpdate(boardId: string, updatedItem: BoardItem) {
+  #handleBoardItemUpdate(event: BoardItemRemoveResponse) {
+    const { boardId, item: updatedItem } = event.payload;
     this.boards.update((boards) => {
       return boards.map((board) => {
         if (board.id === boardId) {
@@ -159,10 +122,7 @@ export class StateService {
             ...board,
             items: board.items.map((item) => {
               if (item.id === updatedItem.id) {
-                return {
-                  ...item,
-                  content: updatedItem.content,
-                };
+                return { ...item, content: updatedItem.content };
               } else {
                 return item;
               }
@@ -175,13 +135,9 @@ export class StateService {
     });
   }
 
-  #handleLogout() {
+  #handleClose() {
     this.user.set(undefined);
     this.users.set([]);
     this.boards.set([]);
-  }
-
-  #send(request: RequestType) {
-    this.#ws?.send(JSON.stringify(request));
   }
 }
