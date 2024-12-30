@@ -9,33 +9,44 @@ import { BoardItemsComponent } from './board-items.component';
   styles: `
     :host {
       flex: 1 1 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 3px;
-      > div {
-        display: flex;
-        flex-direction: column;
-        > h2 {
-          text-align: center;
-        }
-        > ngx-board-items {
-          flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      .columns {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 3px;
+        > div {
+          display: flex;
+          flex-direction: column;
+          > h3 {
+            text-align: center;
+          }
+          > ngx-board-items {
+            flex: 1 1 auto;
+          }
         }
       }
     }
   `,
   template: `
     <div>
-      <h2>Keep doing</h2>
-      <ngx-board-items [items]="keepDoings()" type="keepDoing" />
+      <h2 style="text-align: center; margin: 0">{{ board().name }}</h2>
     </div>
-    <div>
-      <h2>Improvements</h2>
-      <ngx-board-items [items]="improvements()" type="improvement" />
-    </div>
-    <div>
-      <h2>Action points</h2>
-      <ngx-board-items [items]="actionPoints()" type="actionPoint" />
+    <div class="columns">
+      <div>
+        <h3>Keep doing</h3>
+        <ngx-board-items [items]="keepDoings()" type="keepDoing" />
+      </div>
+      <div>
+        <h3>Improvements</h3>
+        <ngx-board-items [items]="improvements()" type="improvement" />
+      </div>
+      <div>
+        <h3>Action points</h3>
+        <ngx-board-items [items]="actionPoints()" type="actionPoint" />
+      </div>
     </div>
   `,
 })

@@ -13,34 +13,40 @@ import { BoardEditDialog } from './board-edit-dialog.component';
       display: flex;
       flex-direction: column;
       gap: 2px;
-      overflow-y: scroll;
+      overflow: hidden;
       width: 200px;
     }
-    .item {
+    .items {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       gap: 3px;
-      &.selected {
-        background-color: #999;
-      }
-      &:hover {
-        cursor: pointer;
-        background-color: #ccc;
+      overflow-y: auto;
+      .item {
+        display: flex;
+        flex-direction: row;
+        gap: 3px;
+        > span.selected {
+          background-color: #ccc;
+        }
+        &:hover {
+          cursor: pointer;
+          background-color: #ccc;
+        }
       }
     }
   `,
   template: `
-    <div>
-      <button (click)="addBoard()">Add board</button>
+    <button (click)="addBoard()">Add board</button>
+    <div class="items">
+      @for (board of boards(); track board.id) {
+        <div class="item">
+          <span style="flex: auto" (click)="state.selectedBoardId.set(board.id)" [class.selected]="board.id === state.selectedBoardId()">
+            {{ board.name }}
+          </span>
+          <button (click)="editBoard(board)">Edit</button>
+        </div>
+      }
     </div>
-    @for (board of boards(); track board.id) {
-      <div class="item">
-        <span style="flex: auto" (click)="state.selectedBoardId.set(board.id)" [class.selected]="board.id === state.selectedBoardId()">
-          {{ board.name }}
-        </span>
-        <button (click)="editBoard(board)">Edit</button>
-      </div>
-    }
   `,
 })
 export class BoardsListComponent {

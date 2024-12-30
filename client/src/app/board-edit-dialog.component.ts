@@ -10,6 +10,7 @@ import { Board } from './types';
   imports: [FormsModule],
   styles: `
     :host {
+      width: 300px;
       display: flex;
       flex-direction: column;
       gap: 3px;
@@ -26,6 +27,8 @@ import { Board } from './types';
     <label for="name">Board name:</label>
     <input type="text" name="name" [(ngModel)]="name" />
     <div class="actions">
+      <button (click)="delete()" style="color: red">Delete</button>
+      <div style="flex: auto"></div>
       <button (click)="update()" [disabled]="name().length === 0">Update</button>
       <button (click)="ref.close()">Close</button>
     </div>
@@ -40,6 +43,11 @@ export class BoardEditDialog {
 
   protected update() {
     this.#state.updateBoard(this.data.id, this.name());
+    this.ref.close();
+  }
+
+  protected delete() {
+    this.#state.removeBoard(this.data.id);
     this.ref.close();
   }
 }

@@ -22,34 +22,39 @@ export class StateService {
     this.#setupConnection();
     const request: RequestType = { type: 'user-add-request', payload: { name } };
     this.#ws?.addEventListener('open', () => {
-      this.#ws?.send(JSON.stringify(request));
+      this.#send(request);
       this.#setupListeners();
     });
   }
 
   addBoard(name: string) {
     const request: RequestType = { type: 'board-add-request', payload: { name } };
-    this.#ws?.send(JSON.stringify(request));
+    this.#send(request);
   }
 
   updateBoard(boardId: string, name: string) {
     const request: RequestType = { type: 'board-update-request', payload: { boardId, name } };
-    this.#ws?.send(JSON.stringify(request));
+    this.#send(request);
+  }
+
+  removeBoard(boardId: string) {
+    const request: RequestType = { type: 'board-remove-request', payload: { id: boardId } };
+    this.#send(request);
   }
 
   addBoardItem(boardId: string, content: string, type: BoardItemType) {
     const request: RequestType = { type: 'board-item-add-request', payload: { boardId, content, type } };
-    this.#ws?.send(JSON.stringify(request));
+    this.#send(request);
   }
 
   removeBoardItem(boardId: string, itemId: string) {
     const request: RequestType = { type: 'board-item-remove-request', payload: { boardId, itemId } };
-    this.#ws?.send(JSON.stringify(request));
+    this.#send(request);
   }
 
   updateBoardItem(boardId: string, itemId: string, content?: string) {
     const request: RequestType = { type: 'board-item-update-request', payload: { boardId, itemId, content } };
-    this.#ws?.send(JSON.stringify(request));
+    this.#send(request);
   }
 
   #setupListeners() {
@@ -143,5 +148,9 @@ export class StateService {
     this.user.set(undefined);
     this.users.set([]);
     this.boards.set([]);
+  }
+
+  #send(request: RequestType) {
+    this.#ws?.send(JSON.stringify(request));
   }
 }
