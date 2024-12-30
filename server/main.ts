@@ -30,7 +30,7 @@ Deno.serve((req) => {
         handler.handleRemoveBoardItem(data.payload.boardId, data.payload.itemId);
         break;
       case "board-item-update-request":
-        handler.handleUpdateBoardItem(data.payload.boardId, data.payload.itemId, data.payload.content, data.payload.type);
+        handler.handleUpdateBoardItem(data.payload.boardId, data.payload.itemId, data.payload.content);
         break;
     }
   });
