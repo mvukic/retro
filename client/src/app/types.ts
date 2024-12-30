@@ -3,14 +3,22 @@ export type User = {
   name: string;
 };
 
+export type UserAddRequest = { type: 'user-add-request'; payload: { name: string } };
+export type BoardAddRequest = { type: 'board-add-request'; payload: { name: string } };
+export type BoardUpdateRequest = { type: 'board-update-request'; payload: { boardId: string; name: string } };
+export type BoardRemoveRequest = { type: 'board-remove-request'; payload: { id: string } };
+export type BoardItemAddRequest = { type: 'board-item-add-request'; payload: { boardId: string; content: string; type: BoardItemType } };
+export type BoardItemRemoveRequest = { type: 'board-item-remove-request'; payload: { boardId: string; itemId: string } };
+export type BoardItemUpdateRequest = { type: 'board-item-update-request'; payload: { boardId: string; itemId: string; content?: string } };
+
 export type RequestType =
-  | { type: 'user-add-request'; payload: { name: string } }
-  | { type: 'board-add-request'; payload: { name: string } }
-  | { type: 'board-update-request'; payload: { boardId: string; name: string } }
-  | { type: 'board-remove-request'; payload: { id: string } }
-  | { type: 'board-item-add-request'; payload: { boardId: string; content: string; type: BoardItemType } }
-  | { type: 'board-item-remove-request'; payload: { boardId: string; itemId: string } }
-  | { type: 'board-item-update-request'; payload: { boardId: string; itemId: string; content?: string } };
+  | UserAddRequest
+  | BoardAddRequest
+  | BoardUpdateRequest
+  | BoardRemoveRequest
+  | BoardItemAddRequest
+  | BoardItemRemoveRequest
+  | BoardItemUpdateRequest;
 
 export type UserAddResponseAllResponse = { type: 'user-add-response-all-response'; payload: { id: string; name: string } };
 export type UserAddResponseCurrentResponse = {
