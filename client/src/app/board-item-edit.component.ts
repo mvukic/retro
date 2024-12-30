@@ -4,37 +4,7 @@ import { StateService } from './state.service';
 import { BoardItem } from './types';
 import { FormsModule } from '@angular/forms';
 import { SenderService } from './sender.service';
-
-@Component({
-  selector: 'ngx-board-item-vote',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: `
-    :host {
-      display: flex;
-      flex-direction: row;
-      .votes {
-        width: 25px;
-        text-align: center;
-      }
-    }
-  `,
-  template: `
-    <div class="votes">{{ votes() }}</div>
-    <button (click)="vote('up')">&uarr;</button>
-    <button (click)="vote('down')">&darr;</button>
-  `,
-})
-export class BoardItemVoteComponent {
-  #sender = inject(SenderService);
-
-  readonly votes = input.required<number>();
-  readonly boardId = input.required<string>();
-  readonly itemId = input.required<string>();
-
-  vote(vote: 'up' | 'down') {
-    this.#sender.voteBoardItem(this.boardId(), this.itemId(), vote);
-  }
-}
+import { BoardItemVoteComponent } from './board-item-vote.component';
 
 @Component({
   selector: 'ngx-board-item-edit',
@@ -93,6 +63,6 @@ export class BoardItemEditComponent {
   }
 
   delete() {
-    this.#sender.removeBoardItem(this.boardId, this.item()!.id);
+    this.#sender.removeBoardItem(this.boardId, this.item().id);
   }
 }
