@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import {Board} from "./types.ts";
 
-const MONGODB_URI = Deno.env.get("http://localhost:3000") || "";
+const MONGODB_URI = "http://localhost:3000";
 
 const client = new MongoClient(MONGODB_URI);
 
