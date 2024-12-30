@@ -1,54 +1,7 @@
-import { ApiService } from './api.service';
-import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
-import { Board } from './types';
-
-@Component({
-  selector: 'ngx-boards-list',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: `
-    :host {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      border: 1px solid red;
-      overflow-y: scroll;
-    }
-    .item {
-      padding: 3px;
-      &:hover {
-        cursor: pointer;
-        background-color: #ccc;
-      }
-    }
-  `,
-  template: `
-    @for (board of api.boards(); track board.id) {
-      <div class="item" (click)="selected.emit(board)">{{ board.name }}</div>
-    }
-  `,
-})
-export class BoardsListComponent {
-  protected readonly api = inject(ApiService);
-
-  readonly selected = output<Board>();
-}
-
-@Component({
-  selector: 'ngx-board',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: `
-    :host {
-      flex: 1 1 auto;
-      border: 1px solid red;
-    }
-  `,
-  template: ` <span>{{ board().name }}</span> `,
-})
-export class BoardComponent {
-  protected readonly api = inject(ApiService);
-
-  readonly board = input.required<Board>();
-}
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { BoardsListComponent } from './boards-list.component';
+import { BoardComponent } from './board.component';
+import { StateService } from './state.service';
 
 @Component({
   selector: 'ngx-boards',
@@ -60,18 +13,24 @@ export class BoardComponent {
       display: flex;
       flex-direction: row;
       overflow: hidden;
-      border: 1px solid red;
+      gap: 3px;
+
+      .placeholder {
+        flex: 1 1 auto;
+        display: grid;
+        place-content: center;
+      }
     }
   `,
   template: `
-    <ngx-boards-list (selected)="board.set($event)" />
-    @if (board()) {
-      <ngx-board [board]="board()!" />
+    <ngx-boards-list />
+    @if (state.hasSelectedBoard()) {
+      <ngx-board [board]="state.selectedBoard()!" />
     } @else {
-      <span>No board selected</span>
+      <div class="placeholder">No board selected</div>
     }
   `,
 })
 export class BoardsComponent {
-  protected readonly board = signal<Board | undefined>(undefined);
+  protected readonly state = inject(StateService);
 }

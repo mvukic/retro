@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ApiService } from './api.service';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { StateService } from './state.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'ngx-login',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [FormsModule],
   styles: `
     :host {
       flex: auto;
@@ -12,14 +14,17 @@ import { ApiService } from './api.service';
     }
   `,
   template: `
-    <input type="text" #loginInput />
-    <button (click)="login(loginInput.value)">Login</button>
+    <label for="name">Name:</label>
+    <input name="name" type="text" [(ngModel)]="name" />
+    <button (click)="login()" [disabled]="!hasName()">Login</button>
   `,
 })
 export class LoginComponent {
-  #api = inject(ApiService);
+  #api = inject(StateService);
+  protected readonly name = signal('');
+  protected readonly hasName = computed(() => this.name().length > 0);
 
-  login(name: string) {
-    this.#api.login(name);
+  login() {
+    this.#api.login(this.name());
   }
 }

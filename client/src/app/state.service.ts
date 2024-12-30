@@ -1,16 +1,17 @@
-import { Injectable, signal } from '@angular/core';
-import { Board, BoardItem, RequestType, ResponseType, User } from './types';
+import { computed, Injectable, signal } from '@angular/core';
+import { Board, BoardItem, BoardItemType, RequestType, ResponseType, User } from './types';
 
 @Injectable({ providedIn: 'root' })
-export class ApiService {
+export class StateService {
   readonly user = signal<User | undefined>(undefined);
+  readonly hasUser = computed(() => !!this.user());
   readonly users = signal<User[]>([]);
-  readonly boards = signal<Board[]>([
-    { id: '1', name: 'Board 1', items: [], createdAt: Date.now() },
-    { id: '2', name: 'Board 2', items: [], createdAt: Date.now() },
-    { id: '3', name: 'Board 3', items: [], createdAt: Date.now() },
-    { id: '4', name: 'Board 4', items: [], createdAt: Date.now() },
-  ]);
+
+  readonly boards = signal<Board[]>([]);
+  readonly selectedBoardId = signal<string | undefined>(undefined);
+  readonly selectedBoard = computed(() => this.boards().find((b) => b.id === this.selectedBoardId()));
+  readonly hasSelectedBoard = computed(() => !!this.selectedBoard());
+
   #ws: WebSocket | null = null;
 
   #setupConnection() {
@@ -26,15 +27,28 @@ export class ApiService {
     });
   }
 
-  logout() {
-    const request: RequestType = { type: 'user-remove-request', payload: { id: this.user()!.id } };
-    this.#ws?.send(JSON.stringify(request));
-    this.user.set(undefined);
-    this.users.set([]);
-  }
-
   addBoard(name: string) {
     const request: RequestType = { type: 'board-add-request', payload: { name } };
+    this.#ws?.send(JSON.stringify(request));
+  }
+
+  updateBoard(boardId: string, name: string) {
+    const request: RequestType = { type: 'board-update-request', payload: { boardId, name } };
+    this.#ws?.send(JSON.stringify(request));
+  }
+
+  addBoardItem(boardId: string, content: string, type: BoardItemType) {
+    const request: RequestType = { type: 'board-item-add-request', payload: { boardId, content, type } };
+    this.#ws?.send(JSON.stringify(request));
+  }
+
+  removeBoardItem(boardId: string, itemId: string) {
+    const request: RequestType = { type: 'board-item-remove-request', payload: { boardId, itemId } };
+    this.#ws?.send(JSON.stringify(request));
+  }
+
+  updateBoardItem(boardId: string, itemId: string, content?: string) {
+    const request: RequestType = { type: 'board-item-update-request', payload: { boardId, itemId, content } };
     this.#ws?.send(JSON.stringify(request));
   }
 
@@ -83,7 +97,7 @@ export class ApiService {
   #handleAddUserCurrent(id: string, name: string, users: User[], boards: Board[]) {
     this.user.set({ id, name });
     this.users.set(users);
-    // this.boards.set(boards);
+    this.boards.set(boards);
   }
 
   #handleUserRemove(id: string) {

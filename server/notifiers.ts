@@ -9,7 +9,6 @@ export function notifyAll(response: ResponseType) {
 
 export function notifySingle(id: string, response: ResponseType) {
   const socket = getSocketForUser(id);
-  if (socket !== undefined) {
-    socket.send(JSON.stringify(response));
-  }
+  if (socket == undefined) return;
+  socket.send(JSON.stringify(response));
 }

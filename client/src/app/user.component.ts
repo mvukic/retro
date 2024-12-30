@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, Input, input } from '@angular/core';
-import { ApiService } from './api.service';
+import { StateService } from './state.service';
 import { User } from './types';
 
 @Component({
@@ -46,5 +46,5 @@ export class UserComponent {
   `,
 })
 export class UsersComponent {
-  protected api = inject(ApiService);
+  protected api = inject(StateService);
 }

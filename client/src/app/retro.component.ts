@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ApiService } from './api.service';
+import { StateService } from './state.service';
 import { LoginComponent } from './login.component';
-import { UsersComponent } from './user.component';
 import { HeaderComponent } from './header.component';
 import { BoardsComponent } from './boards.component';
 
 @Component({
   selector: 'ngx-retro-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LoginComponent, UsersComponent, HeaderComponent, BoardsComponent],
+  imports: [LoginComponent, HeaderComponent, BoardsComponent],
   styles: `
     :host {
       display: flex;
@@ -22,9 +21,8 @@ import { BoardsComponent } from './boards.component';
     <div>
       <h1 style="text-align: center">Retrospective</h1>
     </div>
-    <ngx-header />
-    @if (api.user()) {
-      <ngx-users />
+    @if (state.hasUser()) {
+      <ngx-header />
       <ngx-boards />
     } @else {
       <ngx-login />
@@ -32,5 +30,5 @@ import { BoardsComponent } from './boards.component';
   `,
 })
 export class RetroComponent {
-  readonly api = inject(ApiService);
+  readonly state = inject(StateService);
 }

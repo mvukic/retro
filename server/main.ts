@@ -14,9 +14,6 @@ Deno.serve((req) => {
       case "user-add-request":
         handler.handleAddUser(socket, data.payload.name);
         break;
-      case "user-remove-request":
-        handler.handleRemoveUser(data.payload.id);
-        break;
       case "board-add-request":
         handler.handleAddBoard(data.payload.name);
         break;

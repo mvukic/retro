@@ -1,19 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ApiService } from './api.service';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { UsersComponent } from './user.component';
 
 @Component({
   selector: 'ngx-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    @if (api.user()) {
-      <button (click)="logout()">Logout</button>
-    }
-  `,
+  template: ` <ngx-users />`,
+  imports: [UsersComponent],
 })
-export class HeaderComponent {
-  protected readonly api = inject(ApiService);
-
-  logout() {
-    this.api.logout();
-  }
-}
+export class HeaderComponent {}

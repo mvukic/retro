@@ -5,7 +5,6 @@ export type User = {
 
 export type RequestType =
   | { type: "user-add-request"; payload: { name: string } }
-  | { type: "user-remove-request"; payload: { id: string } }
   | { type: "board-add-request"; payload: { name: string } }
   | { type: "board-update-request"; payload: { boardId: string; name: string } }
   | { type: "board-remove-request"; payload: { id: string } }

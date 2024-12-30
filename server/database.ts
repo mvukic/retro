@@ -15,6 +15,10 @@ export function getUsers(): User[] {
   );
 }
 
+export function getBoards(): Board[] {
+  return Array.from(db.boards.values());
+}
+
 export function getSocketForUser(id: string): WebSocket | undefined {
   return db.perUserId.get(id)?.socket;
 }
@@ -23,21 +27,11 @@ export function getSockets(): WebSocket[] {
   return Array.from(db.perSocket.keys());
 }
 
-export function removeUser(id: string) {
-  const socket = getSocketForUser(id);
-  if (socket) {
-    socket.close();
-    db.perUserId.delete(id);
-    db.perSocket.delete(socket);
-  }
-}
-
 export function removeUserBySocket(socket: WebSocket) {
-  const id = db.perSocket.get(socket);
-  if (id) {
-    db.perUserId.delete(id);
-    db.perSocket.delete(socket);
-  }
+  const id = db.perSocket.get(socket)!;
+  db.perUserId.delete(id);
+  db.perSocket.delete(socket);
+  return id;
 }
 
 export function addUser(socket: WebSocket, name: string) {
@@ -83,10 +77,10 @@ export function removeBoardItem(boardId: string, itemId: string) {
   board.items = board.items.filter((item) => item.id !== itemId);
 }
 
-export function updateBoardItem(boardId: string, itemId: string, content?: string, type?: BoardItemType) {
+export function updateBoardItem(boardId: string, itemId: string, content?: string) {
   const board = db.boards.get(boardId)!;
   const index = board.items.findIndex((item) => item.id === itemId);
   const item = board.items[index];
-  board.items[index] = { ...item, type: type ?? item.type, content: content ?? item.content };
+  board.items[index] = { ...item, content: content ?? item.content };
   return board.items[index];
 }
