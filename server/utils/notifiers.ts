@@ -1,5 +1,5 @@
-import { ResponseType } from "./types.ts";
-import { getSocketForUser, getSockets } from "./database.ts";
+import { ResponseType } from "../types.ts";
+import { getSocketForUser, getSockets } from "../database/users.ts";
 
 export function notifyAll(response: ResponseType) {
   for (const s of getSockets()) {

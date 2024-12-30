@@ -1,5 +1,5 @@
 import { RequestType } from "./types.ts";
-import * as handler from "./handlers.ts";
+import * as handler from "./utils/handlers.ts";
 
 Deno.serve((req) => {
   if (req.headers.get("upgrade") != "websocket") {
