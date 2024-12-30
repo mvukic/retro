@@ -10,7 +10,7 @@ export type RequestType =
   | { type: 'board-remove-request'; payload: { id: string } }
   | { type: 'board-item-add-request'; payload: { boardId: string; content: string; type: BoardItemType } }
   | { type: 'board-item-remove-request'; payload: { boardId: string; itemId: string } }
-  | { type: 'board-item-update-request'; payload: { boardId: string; itemId: string; content?: string; type?: BoardItemType } };
+  | { type: 'board-item-update-request'; payload: { boardId: string; itemId: string; content?: string } };
 
 export type ResponseType =
   | { type: 'user-add-response-all-response'; payload: { id: string; name: string } }

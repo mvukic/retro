@@ -11,6 +11,8 @@ import { User } from './types';
       border-radius: 20px;
       min-width: 60px;
       text-align: center;
+      padding: 0 5px;
+
       &.is-current-user {
         background-color: lightgreen;
       }

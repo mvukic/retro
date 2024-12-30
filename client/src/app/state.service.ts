@@ -122,26 +122,57 @@ export class StateService {
   }
 
   #handleBoardItemAdd(boardId: string, item: BoardItem) {
-    const boards = this.boards();
-    const boardIndex = boards.findIndex((board) => board.id === boardId);
-    boards[boardIndex].items.push(item);
-    this.boards.set(boards);
+    this.boards.update((boards) => {
+      return boards.map((board) => {
+        if (board.id === boardId) {
+          return {
+            ...board,
+            items: [...board.items, item],
+          };
+        } else {
+          return board;
+        }
+      });
+    });
   }
 
   #handleBoardItemRemove(boardId: string, itemId: string) {
-    const boards = this.boards();
-    const boardIndex = boards.findIndex((board) => board.id === boardId);
-    const itemIndex = boards[boardIndex].items.findIndex((item) => item.id === itemId);
-    boards[boardIndex].items.splice(itemIndex, 1);
-    this.boards.set(boards);
+    this.boards.update((boards) => {
+      return boards.map((board) => {
+        if (board.id === boardId) {
+          return {
+            ...board,
+            items: board.items.filter((item) => item.id !== itemId),
+          };
+        } else {
+          return board;
+        }
+      });
+    });
   }
 
-  #handleBoardItemUpdate(boardId: string, item: BoardItem) {
-    const boards = this.boards();
-    const boardIndex = boards.findIndex((board) => board.id === boardId);
-    const itemIndex = boards[boardIndex].items.findIndex((item) => item.id === item.id);
-    boards[boardIndex].items[itemIndex] = item;
-    this.boards.set(boards);
+  #handleBoardItemUpdate(boardId: string, updatedItem: BoardItem) {
+    this.boards.update((boards) => {
+      return boards.map((board) => {
+        if (board.id === boardId) {
+          return {
+            ...board,
+            items: board.items.map((item) => {
+              if (item.id === updatedItem.id) {
+                return {
+                  ...item,
+                  content: updatedItem.content,
+                };
+              } else {
+                return item;
+              }
+            }),
+          };
+        } else {
+          return board;
+        }
+      });
+    });
   }
 
   #handleLogout() {

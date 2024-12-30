@@ -44,5 +44,6 @@ export class BoardItemCreateComponent {
 
   save() {
     this.#state.addBoardItem(this.#boardId, this.content(), this.type());
+    this.content.set('');
   }
 }

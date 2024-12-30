@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, linkedSignal } from '@angular/core';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { StateService } from './state.service';
 import { BoardItem } from './types';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'ngx-board-item-edit',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CdkTextareaAutosize],
+  imports: [CdkTextareaAutosize, FormsModule],
   styles: `
     :host {
       display: flex;
@@ -26,9 +27,15 @@ import { BoardItem } from './types';
     }
   `,
   template: `
-    <textarea cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="10" placeholder="Add content ..."> {{ item()!.content }}</textarea>
+    <textarea
+      cdkTextareaAutosize
+      cdkAutosizeMinRows="5"
+      cdkAutosizeMaxRows="10"
+      placeholder="Add content ..."
+      [(ngModel)]="copy().content"
+    ></textarea>
     <div class="actions">
-      <button (click)="save()">Save</button>
+      <button (click)="update()">Update</button>
       <button (click)="delete()">Delete</button>
     </div>
   `,
@@ -38,9 +45,10 @@ export class BoardItemEditComponent {
   #boardId = this.#state.selectedBoardId()!;
 
   readonly item = input.required<BoardItem>();
+  readonly copy = linkedSignal(this.item);
 
-  save() {
-    this.#state.updateBoardItem(this.#boardId, this.item()!.id, this.item().content);
+  update() {
+    this.#state.updateBoardItem(this.#boardId, this.item().id, this.copy().content);
   }
 
   delete() {
