@@ -139,7 +139,6 @@ export class StateService {
   }
 
   #handleBoardItemVote(event: BoardItemVoteResponse) {
-    console.log(event);
     const { boardId, itemId, votes, voterIds } = event.payload;
     this.boards.update((boards) => {
       return boards.map((board) => {

@@ -53,14 +53,12 @@ export async function updateBoardItem(boardId: string, itemId: string, content?:
 }
 
 export async function voteBoardItem(boardId: string, itemId: string, vote: "up" | "down", userId: string): Promise<BoardItem> {
-  console.log(boardId, itemId, vote, userId);
   const board = db.boards.get(boardId)!;
   const index = board.items.findIndex((item) => item.id === itemId);
   const item = board.items[index];
 
   const votes = item.votes + (vote === "up" ? 1 : -1);
-  const voterIds = vote === "up" ? [...new Set([...item.voterIds, userId])] : item.voterIds.filter(id => id !== userId);
-  console.log(votes, voterIds)
+  const voterIds = vote === "up" ? [...new Set([...item.voterIds, userId])] : item.voterIds.filter((id) => id !== userId);
   board.items[index] = { ...item, votes, voterIds };
   return board.items[index];
 }
