@@ -39,7 +39,7 @@ export class ExportComponent {
       'content,type\n' +
       board.items
         .toSorted((a, b) => a.type.localeCompare(b.type))
-        .map((item) => `${item.content}`)
+        .map((item) => `${item.content},${item.type}`)
         .join('\n');
     this.#download(`${board.name}.csv`, exportString, 'text/csv');
   }

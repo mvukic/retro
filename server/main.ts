@@ -1,5 +1,11 @@
 import { RequestType } from "./types.ts";
-import * as handler from "./utils/handlers.ts";
+import { BoardsDatabaseMemory } from "./database/boards/index.ts";
+import { ApiHandler } from "./utils/handlers.ts";
+import { UsersRepositoryMemory } from "./database/users/index.ts";
+
+const boards = new BoardsDatabaseMemory();
+const users = new UsersRepositoryMemory();
+const handler = new ApiHandler(boards, users);
 
 Deno.serve((req) => {
   if (req.headers.get("upgrade") != "websocket") {
@@ -38,8 +44,8 @@ Deno.serve((req) => {
     }
   });
 
-  socket.addEventListener("close", () => {
-    handler.handleSocketClose(socket);
+  socket.addEventListener("close", async () => {
+    await handler.handleSocketClose(socket);
   });
 
   return response;

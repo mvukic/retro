@@ -1,51 +1,56 @@
-import * as boardsDb from "../database/boards-memory.ts";
-import * as usersDb from "../database/users.ts";
 import { BoardItemType } from "../types.ts";
 import { notifyAll, notifySingle } from "./notifiers.ts";
+import { BoardsRepository } from "../database/boards/boards.repository.ts";
+import { UsersRepository } from "../database/users/users.repository.ts";
 
-export async function handleAddUser(socket: WebSocket, name: string, existingId?: string) {
-  const id = usersDb.addUser(socket, name, existingId);
-  const users = usersDb.getUsers();
-  const boards = await boardsDb.getBoards();
-  notifyAll({ type: "user-add-response-all-response", payload: { id, name } });
-  notifySingle(id, { type: "user-add-response-current-response", payload: { users, boards, id, name } });
-}
+export class ApiHandler {
+  constructor(private boards: BoardsRepository, private users: UsersRepository) {
+  }
 
-export function handleSocketClose(socket: WebSocket) {
-  const id = usersDb.removeUserBySocket(socket);
-  notifyAll({ type: "user-remove-response", payload: { id } });
-}
+  async handleAddUser(socket: WebSocket, name: string, existingId?: string) {
+    const id = await this.users.addUser(socket, name, existingId);
+    const users = await this.users.getUsers();
+    const boards = await this.boards.getBoards();
+    notifyAll({ type: "user-add-response-all-response", payload: { id, name } }, await this.users.getSockets());
+    notifySingle({ type: "user-add-response-current-response", payload: { users, boards, id, name } }, socket);
+  }
 
-export async function handleAddBoard(name: string) {
-  const board = await boardsDb.addBoard(name);
-  notifyAll({ type: "board-add-response", payload: { board } });
-}
+  async handleSocketClose(socket: WebSocket) {
+    const id = await this.users.removeUserBySocket(socket);
+    notifyAll({ type: "user-remove-response", payload: { id } }, await this.users.getSockets());
+  }
 
-export async function handleUpdateBoard(id: string, name: string) {
-  await boardsDb.updateBoard(id, name);
-  notifyAll({ type: "board-update-response", payload: { boardId: id, name } });
-}
+  async handleAddBoard(name: string) {
+    const board = await this.boards.addBoard(name);
+    notifyAll({ type: "board-add-response", payload: { board } }, await this.users.getSockets());
+  }
 
-export async function handleRemoveBoard(id: string) {
-  await boardsDb.removeBoard(id);
-  notifyAll({ type: "board-remove-response", payload: { id } });
-}
+  async handleUpdateBoard(id: string, name: string) {
+    await this.boards.updateBoard(id, name);
+    notifyAll({ type: "board-update-response", payload: { boardId: id, name } }, await this.users.getSockets());
+  }
 
-export async function handleAddBoardItem(boardId: string, content: string, type: BoardItemType) {
-  const item = await boardsDb.addBoardItem(boardId, content, type);
-  notifyAll({ type: "board-item-add-response", payload: { boardId, item } });
-}
+  async handleRemoveBoard(id: string) {
+    await this.boards.removeBoard(id);
+    notifyAll({ type: "board-remove-response", payload: { id } }, await this.users.getSockets());
+  }
 
-export async function handleRemoveBoardItem(boardId: string, itemId: string) {
-  await boardsDb.removeBoardItem(boardId, itemId);
-  notifyAll({ type: "board-item-remove-response", payload: { boardId, itemId } });
-}
-export async function handleUpdateBoardItem(boardId: string, itemId: string, content?: string) {
-  const item = await boardsDb.updateBoardItem(boardId, itemId, content);
-  notifyAll({ type: "board-item-update-response", payload: { boardId, item } });
-}
+  async handleAddBoardItem(boardId: string, content: string, type: BoardItemType) {
+    const item = await this.boards.addBoardItem(boardId, content, type);
+    notifyAll({ type: "board-item-add-response", payload: { boardId, item } }, await this.users.getSockets());
+  }
 
-export async function handleVoteBoardItem(boardId: string, itemId: string, vote: "up" | "down", userId: string) {
-  const { votes, voterIds } = await boardsDb.voteBoardItem(boardId, itemId, vote, userId);
-  notifyAll({ type: "board-item-vote-response", payload: { boardId, itemId, votes, voterIds } });
+  async handleRemoveBoardItem(boardId: string, itemId: string) {
+    await this.boards.removeBoardItem(boardId, itemId);
+    notifyAll({ type: "board-item-remove-response", payload: { boardId, itemId } }, await this.users.getSockets());
+  }
+  async handleUpdateBoardItem(boardId: string, itemId: string, content?: string) {
+    const item = await this.boards.updateBoardItem(boardId, itemId, content);
+    notifyAll({ type: "board-item-update-response", payload: { boardId, item } }, await this.users.getSockets());
+  }
+
+  async handleVoteBoardItem(boardId: string, itemId: string, vote: "up" | "down", userId: string) {
+    const { votes, voterIds } = await this.boards.voteBoardItem(boardId, itemId, vote, userId);
+    notifyAll({ type: "board-item-vote-response", payload: { boardId, itemId, votes, voterIds } }, await this.users.getSockets());
+  }
 }

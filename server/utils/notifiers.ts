@@ -1,14 +1,11 @@
 import { ResponseType } from "../types.ts";
-import { getSocketForUser, getSockets } from "../database/users.ts";
 
-export function notifyAll(response: ResponseType) {
-  for (const s of getSockets()) {
+export function notifyAll(response: ResponseType, sockets: WebSocket[]) {
+  for (const s of sockets) {
     s.send(JSON.stringify(response));
   }
 }
 
-export function notifySingle(id: string, response: ResponseType) {
-  const socket = getSocketForUser(id);
-  if (socket == undefined) return;
+export function notifySingle(response: ResponseType, socket: WebSocket) {
   socket.send(JSON.stringify(response));
 }
