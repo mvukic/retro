@@ -3,14 +3,14 @@ export type User = {
   name: string;
 };
 
-export type UserAddRequest = { type: "user-add-request"; payload: { name: string } };
+export type UserAddRequest = { type: "user-add-request"; payload: { name: string; id?: string } };
 export type BoardAddRequest = { type: "board-add-request"; payload: { name: string } };
 export type BoardUpdateRequest = { type: "board-update-request"; payload: { boardId: string; name: string } };
 export type BoardRemoveRequest = { type: "board-remove-request"; payload: { id: string } };
 export type BoardItemAddRequest = { type: "board-item-add-request"; payload: { boardId: string; content: string; type: BoardItemType } };
 export type BoardItemRemoveRequest = { type: "board-item-remove-request"; payload: { boardId: string; itemId: string } };
 export type BoardItemUpdateRequest = { type: "board-item-update-request"; payload: { boardId: string; itemId: string; content?: string } };
-export type BoardItemVoteRequest = { type: "board-item-vote-request"; payload: { boardId: string; itemId: string; vote: "up" | "down" } };
+export type BoardItemVoteRequest = { type: "board-item-vote-request"; payload: { boardId: string; itemId: string; vote: "up" | "down"; userId: string } };
 
 export type RequestType =
   | UserAddRequest
@@ -34,7 +34,7 @@ export type BoardRemoveResponse = { type: "board-remove-response"; payload: { id
 export type BoardItemAddResponse = { type: "board-item-add-response"; payload: { boardId: string; item: BoardItem } };
 export type BoardItemUpdateResponse = { type: "board-item-remove-response"; payload: { boardId: string; itemId: string } };
 export type BoardItemRemoveResponse = { type: "board-item-update-response"; payload: { boardId: string; item: BoardItem } };
-export type BoardItemVoteResponse = { type: "board-item-vote-response"; payload: { boardId: string; itemId: string; votes: number } };
+export type BoardItemVoteResponse = { type: "board-item-vote-response"; payload: { boardId: string; itemId: string; votes: number, voterIds: string[] } };
 
 export type ResponseType =
   | UserAddResponseAllResponse
@@ -56,6 +56,7 @@ export type BoardItem = {
   type: BoardItemType;
   createdAt: number;
   votes: number;
+  voterIds: string[];
 };
 
 export type Board = {

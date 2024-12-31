@@ -36,8 +36,8 @@ export class SenderService {
     this.#api.send(request);
   }
 
-  voteBoardItem(boardId: string, itemId: string, vote: 'up' | 'down') {
-    const request: RequestType = { type: 'board-item-vote-request', payload: { boardId, itemId, vote } };
+  voteBoardItem(boardId: string, itemId: string, vote: 'up' | 'down', userId: string) {
+    const request: RequestType = { type: 'board-item-vote-request', payload: { boardId, itemId, vote, userId } };
     this.#api.send(request);
   }
 }

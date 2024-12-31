@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { Board } from './types';
 import { BoardItemColumnComponent } from './board-item-column.component';
+import { ExportComponent } from './export.component';
 
 @Component({
   selector: 'ngx-board',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardItemColumnComponent],
+  imports: [BoardItemColumnComponent, ExportComponent],
   styles: `
     :host {
       flex: 1 1 auto;
@@ -23,6 +24,9 @@ import { BoardItemColumnComponent } from './board-item-column.component';
   template: `
     <div>
       <h2 style="text-align: center; margin: 0">{{ board().name }}</h2>
+    </div>
+    <div style="display: flex; flex-direction: row-reverse;">
+      <ngx-export />
     </div>
     <div class="columns">
       <ngx-board-items-column [type]="'keepDoing'" [items]="keepDoings()" />

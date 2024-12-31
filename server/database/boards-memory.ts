@@ -32,7 +32,7 @@ export async function removeBoard(id: string): Promise<string> {
 
 export async function addBoardItem(boardId: string, content: string, type: BoardItemType): Promise<BoardItem> {
   const id = crypto.randomUUID();
-  const item: BoardItem = { id, content, type, createdAt: Date.now(), votes: 0 };
+  const item: BoardItem = { id, content, type, createdAt: Date.now(), votes: 0, voterIds: [] };
   const board = db.boards.get(boardId)!;
   board.items.push(item);
   return item;
@@ -52,10 +52,15 @@ export async function updateBoardItem(boardId: string, itemId: string, content?:
   return board.items[index];
 }
 
-export async function voteBoardItem(boardId: string, itemId: string, vote: "up" | "down"): Promise<number> {
+export async function voteBoardItem(boardId: string, itemId: string, vote: "up" | "down", userId: string): Promise<BoardItem> {
+  console.log(boardId, itemId, vote, userId);
   const board = db.boards.get(boardId)!;
   const index = board.items.findIndex((item) => item.id === itemId);
   const item = board.items[index];
-  board.items[index] = { ...item, votes: item.votes + (vote === "up" ? 1 : -1) };
-  return board.items[index].votes;
+
+  const votes = item.votes + (vote === "up" ? 1 : -1);
+  const voterIds = vote === "up" ? [...new Set([...item.voterIds, userId])] : item.voterIds.filter(id => id !== userId);
+  console.log(votes, voterIds)
+  board.items[index] = { ...item, votes, voterIds };
+  return board.items[index];
 }

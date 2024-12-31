@@ -12,7 +12,7 @@ Deno.serve((req) => {
     const data = JSON.parse(event.data) as RequestType;
     switch (data.type) {
       case "user-add-request":
-        await handler.handleAddUser(socket, data.payload.name);
+        await handler.handleAddUser(socket, data.payload.name, data.payload.id);
         break;
       case "board-add-request":
         await handler.handleAddBoard(data.payload.name);
@@ -33,7 +33,7 @@ Deno.serve((req) => {
         await handler.handleUpdateBoardItem(data.payload.boardId, data.payload.itemId, data.payload.content);
         break;
       case "board-item-vote-request":
-        await handler.handleVoteBoardItem(data.payload.boardId, data.payload.itemId, data.payload.vote);
+        await handler.handleVoteBoardItem(data.payload.boardId, data.payload.itemId, data.payload.vote, data.payload.userId);
         break;
     }
   });

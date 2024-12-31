@@ -28,11 +28,11 @@ export class StateService {
   readonly selectedBoard = computed(() => this.boards().find((b) => b.id === this.selectedBoardId()));
   readonly hasSelectedBoard = computed(() => !!this.selectedBoard());
 
-  login(name: string) {
+  login(name: string, id?: string) {
     this.#api.connect();
     this.#api.onOpen(() => {
-      this.#api.send({ type: 'user-add-request', payload: { name } });
       this.#setupListeners();
+      this.#api.send({ type: 'user-add-request', payload: { name, id } });
     });
   }
 
@@ -67,6 +67,7 @@ export class StateService {
     this.user.set({ id, name });
     this.users.set(users);
     this.boards.set(boards);
+    localStorage.setItem('retro_user_id', id);
   }
 
   #handleUserRemove(event: UserRemoveResponse) {
@@ -138,7 +139,8 @@ export class StateService {
   }
 
   #handleBoardItemVote(event: BoardItemVoteResponse) {
-    const { boardId, itemId, votes } = event.payload;
+    console.log(event);
+    const { boardId, itemId, votes, voterIds } = event.payload;
     this.boards.update((boards) => {
       return boards.map((board) => {
         if (board.id === boardId) {
@@ -146,7 +148,7 @@ export class StateService {
             ...board,
             items: board.items.map((item) => {
               if (item.id === itemId) {
-                return { ...item, votes };
+                return { ...item, votes, voterIds };
               } else {
                 return item;
               }

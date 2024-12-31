@@ -3,8 +3,8 @@ import * as usersDb from "../database/users.ts";
 import { BoardItemType } from "../types.ts";
 import { notifyAll, notifySingle } from "./notifiers.ts";
 
-export async function handleAddUser(socket: WebSocket, name: string) {
-  const id = usersDb.addUser(socket, name);
+export async function handleAddUser(socket: WebSocket, name: string, existingId?: string) {
+  const id = usersDb.addUser(socket, name, existingId);
   const users = usersDb.getUsers();
   const boards = await boardsDb.getBoards();
   notifyAll({ type: "user-add-response-all-response", payload: { id, name } });
@@ -45,7 +45,7 @@ export async function handleUpdateBoardItem(boardId: string, itemId: string, con
   notifyAll({ type: "board-item-update-response", payload: { boardId, item } });
 }
 
-export async function handleVoteBoardItem(boardId: string, itemId: string, vote: "up" | "down") {
-  const votes = await boardsDb.voteBoardItem(boardId, itemId, vote);
-  notifyAll({ type: "board-item-vote-response", payload: { boardId, itemId, votes } });
+export async function handleVoteBoardItem(boardId: string, itemId: string, vote: "up" | "down", userId: string) {
+  const { votes, voterIds } = await boardsDb.voteBoardItem(boardId, itemId, vote, userId);
+  notifyAll({ type: "board-item-vote-response", payload: { boardId, itemId, votes, voterIds } });
 }

@@ -47,7 +47,7 @@ import { BoardItemVoteComponent } from './board-item-vote.component';
         <div style="flex: 1"></div>
       </div>
     </div>
-    <ngx-board-item-vote [boardId]="boardId" [itemId]="item().id" [votes]="item().votes" />
+    <ngx-board-item-vote [boardId]="boardId" [itemId]="item().id" [votes]="item().votes" [voterIds]="item().voterIds" />
   `,
 })
 export class BoardItemEditComponent {

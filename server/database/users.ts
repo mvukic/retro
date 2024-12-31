@@ -29,8 +29,8 @@ export function removeUserBySocket(socket: WebSocket) {
   return id;
 }
 
-export function addUser(socket: WebSocket, name: string) {
-  const id = crypto.randomUUID();
+export function addUser(socket: WebSocket, name: string, existingId?: string) {
+  const id = existingId ?? crypto.randomUUID();
   db.perUserId.set(id, { name, socket });
   db.perSocket.set(socket, id);
   return id;

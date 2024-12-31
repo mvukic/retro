@@ -25,6 +25,7 @@ export class LoginComponent {
   protected readonly hasName = computed(() => this.name().length > 0);
 
   login() {
-    this.#api.login(this.name());
+    const id = localStorage.getItem('retro_user_id') ?? undefined;
+    this.#api.login(this.name(), id);
   }
 }
