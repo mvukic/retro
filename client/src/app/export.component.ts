@@ -17,6 +17,73 @@ export class ExportComponent {
   #state = inject(StateService);
 
   export(type: 'csv' | 'json' | 'text') {
-    console.log(type);
+    switch (type) {
+      case 'csv':
+        this.#csvExport();
+        break;
+      case 'json':
+        this.#jsonExport();
+        break;
+      case 'text':
+        this.#textExport();
+        break;
+    }
+  }
+
+  #csvExport() {
+    const board = this.#state.boards().find((board) => board.id === this.#state.selectedBoardId());
+    if (board == undefined) return;
+
+    const exportString =
+      'content,type\n' +
+      board.items
+        .toSorted((a, b) => a.type.localeCompare(b.type))
+        .map((item) => `${item.content}`)
+        .join('\n');
+    this.#download(`${board.name}.csv`, exportString, 'text/csv');
+  }
+
+  #jsonExport() {
+    const board = this.#state.boards().find((board) => board.id === this.#state.selectedBoardId());
+    if (board == undefined) return;
+
+    const exportObject = {
+      name: board.name,
+      keepDoing: board.items.filter((item) => item.type === 'keepDoing').map(({ content }) => content),
+      improvements: board.items.filter((item) => item.type === 'improvement').map(({ content }) => content),
+      items: board.items.filter((item) => item.type === 'actionPoint').map(({ content }) => content),
+    };
+    const exportString = JSON.stringify(exportObject);
+    this.#download(`${board.name}.json`, exportString, 'application/json');
+  }
+
+  #textExport() {
+    const board = this.#state.boards().find((board) => board.id === this.#state.selectedBoardId());
+    if (board == undefined) return;
+
+    const exportString = `
+    Keep Doing: ${board.items
+      .filter((item) => item.type === 'keepDoing')
+      .map(({ content }) => content)
+      .join('\n\t')}
+    Improvements: ${board.items
+      .filter((item) => item.type === 'improvement')
+      .map(({ content }) => content)
+      .join('\n\t')}
+    Action Points: ${board.items
+      .filter((item) => item.type === 'actionPoint')
+      .map(({ content }) => content)
+      .join('\n\t')}
+    `;
+    this.#download(`${board.name}.txt`, exportString, 'text/plain');
+  }
+
+  #download(name: string, content: string, type: string) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    a.click();
   }
 }
