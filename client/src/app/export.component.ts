@@ -7,6 +7,7 @@ import { StateService } from './state.service';
   template: `
     <label for="export-select">Export:</label>
     <select name="export-select" (change)="export($any($event.target).value)">
+      <option>-- Select format --</option>
       <option value="csv">csv</option>
       <option value="json">json</option>
       <option value="text">text</option>
@@ -16,7 +17,7 @@ import { StateService } from './state.service';
 export class ExportComponent {
   #state = inject(StateService);
 
-  export(type: 'csv' | 'json' | 'text') {
+  export(type: 'csv' | 'json' | 'text' | undefined) {
     switch (type) {
       case 'csv':
         this.#csvExport();
@@ -51,7 +52,7 @@ export class ExportComponent {
       name: board.name,
       keepDoing: board.items.filter((item) => item.type === 'keepDoing').map(({ content }) => content),
       improvements: board.items.filter((item) => item.type === 'improvement').map(({ content }) => content),
-      items: board.items.filter((item) => item.type === 'actionPoint').map(({ content }) => content),
+      actionPoints: board.items.filter((item) => item.type === 'actionPoint').map(({ content }) => content),
     };
     const exportString = JSON.stringify(exportObject);
     this.#download(`${board.name}.json`, exportString, 'application/json');
@@ -61,20 +62,21 @@ export class ExportComponent {
     const board = this.#state.boards().find((board) => board.id === this.#state.selectedBoardId());
     if (board == undefined) return;
 
-    const exportString = `
-    Keep Doing: ${board.items
+    let exportString = 'Keep Doing:\n';
+    board.items
       .filter((item) => item.type === 'keepDoing')
       .map(({ content }) => content)
-      .join('\n\t')}
-    Improvements: ${board.items
+      .forEach((content) => (exportString += `    ${content}\n`));
+    exportString += 'Improvements:\n';
+    board.items
       .filter((item) => item.type === 'improvement')
       .map(({ content }) => content)
-      .join('\n\t')}
-    Action Points: ${board.items
+      .forEach((content) => (exportString += `    ${content}\n`));
+    exportString += 'Action Points:\n';
+    board.items
       .filter((item) => item.type === 'actionPoint')
       .map(({ content }) => content)
-      .join('\n\t')}
-    `;
+      .forEach((content) => (exportString += `    ${content}\n`));
     this.#download(`${board.name}.txt`, exportString, 'text/plain');
   }
 
