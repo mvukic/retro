@@ -23,7 +23,7 @@ import { SenderService } from './sender.service';
   `,
   template: `
     <label for="name">Board name:</label>
-    <input type="text" name="name" [(ngModel)]="name" autocomplete="off" />
+    <input type="text" id="name" [(ngModel)]="name" autocomplete="off" />
     <div class="actions">
       <button (click)="create()" [disabled]="name().length === 0">Save</button>
       <button (click)="ref.close()">Close</button>

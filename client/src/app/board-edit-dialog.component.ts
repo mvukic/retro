@@ -25,7 +25,7 @@ import { SenderService } from './sender.service';
   `,
   template: `
     <label for="name">Board name:</label>
-    <input type="text" name="name" [(ngModel)]="name" autocomplete="off" />
+    <input type="text" id="name" [(ngModel)]="name" autocomplete="off" />
     <div class="actions">
       <button (click)="delete()" style="color: red">Delete</button>
       <div style="flex: auto"></div>

@@ -6,7 +6,7 @@ import { StateService } from './state.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <label for="export-select">Export:</label>
-    <select name="export-select" (change)="export($any($event.target).value)">
+    <select id="export-select" (change)="export($any($event.target).value)">
       <option>-- Select format --</option>
       <option value="csv">csv</option>
       <option value="json">json</option>
