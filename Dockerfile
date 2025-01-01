@@ -12,9 +12,9 @@ WORKDIR /usr/retro/server
 RUN deno compile --allow-net main.ts
 
 FROM docker.io/library/nginx:1.27.3-alpine-slim
-RUN apk add --no-cache curl
 RUN rm -rf /usr/share/nginx/html/*
+COPY /nginx.conf /etc/nginx/nginx.conf
 COPY --from=build-client /usr/retro/client/dist/ngx-retro /usr/share/nginx/html
 COPY --from=build-server /usr/retro/server/server /usr/local/bin/retro-server
-EXPOSE 80 8080 443
+EXPOSE 80 8080
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
