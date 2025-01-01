@@ -3,6 +3,24 @@ export type User = {
   name: string;
 };
 
+export type BoardItemType = 'actionPoint' | 'improvement' | 'keepDoing';
+
+export type BoardItem = {
+  id: string;
+  content: string;
+  type: BoardItemType;
+  createdAt: number;
+  votes: number;
+  voterIds: string[];
+};
+
+export type Board = {
+  id: string;
+  name: string;
+  items: BoardItem[];
+  createdAt: number;
+};
+
 export type UserAddRequest = { type: 'user-add-request'; payload: Omit<User, 'id'> & Partial<Pick<User, 'id'>> };
 export type UserUpdateRequest = { type: 'user-update-request'; payload: Pick<User, 'id' | 'name'> };
 export type BoardAddRequest = { type: 'board-add-request'; payload: Pick<User, 'name'> };
@@ -57,21 +75,3 @@ export type ResponseType =
   | BoardItemRemoveResponse
   | BoardItemVoteResponse
   | UserUpdateResponseAllResponse;
-
-export type BoardItemType = 'actionPoint' | 'improvement' | 'keepDoing';
-
-export type BoardItem = {
-  id: string;
-  content: string;
-  type: BoardItemType;
-  createdAt: number;
-  votes: number;
-  voterIds: string[];
-};
-
-export type Board = {
-  id: string;
-  name: string;
-  items: BoardItem[];
-  createdAt: number;
-};
