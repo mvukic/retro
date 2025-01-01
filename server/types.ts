@@ -3,11 +3,11 @@ export type User = {
   name: string;
 };
 
-export type UserAddRequest = { type: "user-add-request"; payload: { name: string; id?: string } };
-export type UserUpdateRequest = { type: "user-update-request"; payload: { id: string; name: string } };
-export type BoardAddRequest = { type: "board-add-request"; payload: { name: string } };
+export type UserAddRequest = { type: "user-add-request"; payload: Omit<User, 'id'> & Partial<Pick<User, 'id'>> };
+export type UserUpdateRequest = { type: "user-update-request"; payload: Pick<User, 'id' | 'name'> };
+export type BoardAddRequest = { type: "board-add-request"; payload: Pick<User, 'name'> };
 export type BoardUpdateRequest = { type: "board-update-request"; payload: { boardId: string; name: string } };
-export type BoardRemoveRequest = { type: "board-remove-request"; payload: { id: string } };
+export type BoardRemoveRequest = { type: "board-remove-request"; payload: Pick<Board, 'id'> };
 export type BoardItemAddRequest = { type: "board-item-add-request"; payload: { boardId: string; content: string; type: BoardItemType } };
 export type BoardItemRemoveRequest = { type: "board-item-remove-request"; payload: { boardId: string; itemId: string } };
 export type BoardItemUpdateRequest = { type: "board-item-update-request"; payload: { boardId: string; itemId: string; content?: string } };
@@ -33,10 +33,10 @@ export type UserAddResponseCurrentResponse = {
   type: "user-add-response-current-response";
   payload: { id: string; name: string; users: User[]; boards: Board[] };
 };
-export type UserRemoveResponse = { type: "user-remove-response"; payload: { id: string } };
+export type UserRemoveResponse = { type: "user-remove-response"; payload: Pick<User, 'id'> };
 export type BoardAddResponse = { type: "board-add-response"; payload: { board: Board } };
 export type BoardUpdateResponse = { type: "board-update-response"; payload: { boardId: string; name: string } };
-export type BoardRemoveResponse = { type: "board-remove-response"; payload: { id: string } };
+export type BoardRemoveResponse = { type: "board-remove-response"; payload: Pick<Board, 'id'> };
 export type BoardItemAddResponse = { type: "board-item-add-response"; payload: { boardId: string; item: BoardItem } };
 export type BoardItemUpdateResponse = { type: "board-item-remove-response"; payload: { boardId: string; itemId: string } };
 export type BoardItemRemoveResponse = { type: "board-item-update-response"; payload: { boardId: string; item: BoardItem } };
