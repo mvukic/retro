@@ -21,6 +21,10 @@ export class ApiService {
     this.#ws?.addEventListener('close', fn);
   }
 
+  onError(fn: (event: Event) => void) {
+    this.#ws?.addEventListener('error', fn);
+  }
+
   send(request: RequestType) {
     this.#ws?.send(JSON.stringify(request));
   }

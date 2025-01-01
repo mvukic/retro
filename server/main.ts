@@ -7,7 +7,7 @@ const boards = new BoardsDatabaseMemory();
 const users = new UsersRepositoryMemory();
 const handler = new ApiHandler(boards, users);
 
-Deno.serve( { port: 8080 }, (req) => {
+Deno.serve({ port: 8080 }, (req) => {
   if (req.headers.get("upgrade") != "websocket") {
     return new Response(null, { status: 501 });
   }
@@ -48,6 +48,11 @@ Deno.serve( { port: 8080 }, (req) => {
   });
 
   socket.addEventListener("close", async () => {
+    await handler.handleSocketClose(socket);
+  });
+
+  socket.addEventListener("error", async (event) => {
+    console.error(event);
     await handler.handleSocketClose(socket);
   });
 

@@ -57,6 +57,7 @@ export class StateService {
       handlers[data.type](data);
     });
     this.#api.onClose(() => this.#handleClose());
+    this.#api.onError((e) => this.#handleError(e));
   }
 
   #handleAddUserAll(event: UserAddResponseAllResponse) {
@@ -174,5 +175,10 @@ export class StateService {
     this.user.set(undefined);
     this.users.set([]);
     this.boards.set([]);
+  }
+
+  #handleError(event: Event) {
+    console.error(event);
+    this.#handleClose();
   }
 }
