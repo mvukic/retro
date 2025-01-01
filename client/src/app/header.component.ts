@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { UsersComponent } from './user.component';
+
+import { UsersComponent } from './users.component';
 
 @Component({
   selector: 'ngx-header',

@@ -3,7 +3,7 @@ import { BoardItemsComponent } from './board-items.component';
 import { BoardItem, BoardItemType } from './types';
 
 @Component({
-  selector: 'ngx-board-items-column',
+  selector: 'ngx-board-items-by-type',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [BoardItemsComponent],
   styles: `
@@ -31,7 +31,7 @@ import { BoardItem, BoardItemType } from './types';
     <ngx-board-items [items]="sortedItems()" [type]="type()" />
   `,
 })
-export class BoardItemColumnComponent {
+export class BoardItemsByTypeComponent {
   readonly type = input.required<BoardItemType>();
   readonly items = input.required<BoardItem[]>();
 

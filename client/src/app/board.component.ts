@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { Board } from './types';
-import { BoardItemColumnComponent } from './board-item-column.component';
+import { BoardItemsByTypeComponent } from './board-items-by-type.component';
 import { ExportComponent } from './export.component';
 
 @Component({
   selector: 'ngx-board',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BoardItemColumnComponent, ExportComponent],
+  imports: [BoardItemsByTypeComponent, ExportComponent],
   styles: `
     :host {
       flex: 1 1 auto;
@@ -29,9 +29,9 @@ import { ExportComponent } from './export.component';
       <ngx-export />
     </div>
     <div class="columns">
-      <ngx-board-items-column [type]="'keepDoing'" [items]="keepDoings()" />
-      <ngx-board-items-column [type]="'improvement'" [items]="improvements()" />
-      <ngx-board-items-column [type]="'actionPoint'" [items]="actionPoints()" />
+      <ngx-board-items-by-type [type]="'keepDoing'" [items]="keepDoings()" />
+      <ngx-board-items-by-type [type]="'improvement'" [items]="improvements()" />
+      <ngx-board-items-by-type [type]="'actionPoint'" [items]="actionPoints()" />
     </div>
   `,
 })
