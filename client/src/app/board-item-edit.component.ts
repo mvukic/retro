@@ -63,6 +63,8 @@ export class BoardItemEditComponent {
   }
 
   delete() {
-    this.#sender.removeBoardItem(this.boardId, this.item().id);
+    if (confirm('Are you sure?')) {
+      this.#sender.removeBoardItem(this.boardId, this.item().id);
+    }
   }
 }

@@ -47,7 +47,9 @@ export class BoardEditDialog {
   }
 
   protected delete() {
-    this.#sender.removeBoard(this.data.id);
-    this.ref.close();
+    if (confirm('Are you sure?')) {
+      this.#sender.removeBoard(this.data.id);
+      this.ref.close();
+    }
   }
 }

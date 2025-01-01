@@ -6,6 +6,11 @@ import { BoardItemType, RequestType } from './types';
 export class SenderService {
   #api = inject(ApiService);
 
+  updateUser(id: string, name: string) {
+    const request: RequestType = { type: 'user-update-request', payload: { id, name } };
+    this.#api.send(request);
+  }
+
   addBoard(name: string) {
     const request: RequestType = { type: 'board-add-request', payload: { name } };
     this.#api.send(request);

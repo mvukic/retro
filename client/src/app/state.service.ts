@@ -13,6 +13,7 @@ import {
   UserAddResponseAllResponse,
   UserAddResponseCurrentResponse,
   UserRemoveResponse,
+  UserUpdateResponseAllResponse,
 } from './types';
 import { ApiService } from './api.service';
 
@@ -40,6 +41,7 @@ export class StateService {
     const handlers = {
       'user-add-response-all-response': this.#handleAddUserAll.bind(this),
       'user-add-response-current-response': this.#handleAddUserCurrent.bind(this),
+      'user-update-response-all-response': this.#handleUpdateUserAll.bind(this),
       'user-remove-response': this.#handleUserRemove.bind(this),
       'board-add-response': this.#handleBoardAdd.bind(this),
       'board-update-response': this.#handleBoardUpdate.bind(this),
@@ -59,7 +61,9 @@ export class StateService {
 
   #handleAddUserAll(event: UserAddResponseAllResponse) {
     const { id, name } = event.payload;
-    this.users.update((users) => [...users, { id, name }]);
+    if (!this.users().some((user) => user.id === id)) {
+      this.users.update((users) => [...users, { id, name }]);
+    }
   }
 
   #handleAddUserCurrent(event: UserAddResponseCurrentResponse) {
@@ -68,6 +72,12 @@ export class StateService {
     this.users.set(users);
     this.boards.set(boards);
     localStorage.setItem('retro_user_id', id);
+    localStorage.setItem('retro_user_name', name);
+  }
+
+  #handleUpdateUserAll(event: UserUpdateResponseAllResponse) {
+    const { id, name } = event.payload;
+    this.users.update((users) => users.map((user) => (user.id === id ? { id, name } : user)));
   }
 
   #handleUserRemove(event: UserRemoveResponse) {

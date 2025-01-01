@@ -15,6 +15,11 @@ export class ApiHandler {
     notifySingle({ type: "user-add-response-current-response", payload: { users, boards, id, name } }, socket);
   }
 
+  async handleUpdateUser(id: string, name: string) {
+    await this.users.updateUser(id, name);
+    notifyAll({ type: "user-update-response-all-response", payload: { id, name } }, await this.users.getSockets());
+  }
+
   async handleSocketClose(socket: WebSocket) {
     const id = await this.users.removeUserBySocket(socket);
     notifyAll({ type: "user-remove-response", payload: { id } }, await this.users.getSockets());

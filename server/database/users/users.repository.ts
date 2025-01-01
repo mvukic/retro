@@ -1,6 +1,7 @@
 import { User } from "../../types.ts";
 
 export interface UsersRepository {
+  updateUser(id: string, name: string): Promise<void>;
   getUsers(): Promise<User[]>;
   getSocketForUser(id: string): Promise<WebSocket | undefined>;
   getSockets(): Promise<WebSocket[]>;

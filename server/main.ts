@@ -20,6 +20,9 @@ Deno.serve((req) => {
       case "user-add-request":
         await handler.handleAddUser(socket, data.payload.name, data.payload.id);
         break;
+      case "user-update-request":
+        await handler.handleUpdateUser(data.payload.id, data.payload.name);
+        break;
       case "board-add-request":
         await handler.handleAddBoard(data.payload.name);
         break;

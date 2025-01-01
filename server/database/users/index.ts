@@ -1,1 +1,1 @@
-export { UsersRepositoryMemory } from "./users.memory.ts";
+export { UsersRepositoryMemory } from "./users-memory.ts";

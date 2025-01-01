@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { User } from './types';
+import { SenderService } from './sender.service';
 
 @Component({
   selector: 'ngx-user',
@@ -14,6 +15,17 @@ import { User } from './types';
 
       &.is-current-user {
         background-color: lightgreen;
+        &:hover {
+          border: 1px dashed black;
+        }
+      }
+      input {
+        background-color: lightgreen;
+        border: none;
+        &:focus {
+          border: none;
+          outline: none;
+        }
       }
     }
   `,
@@ -21,9 +33,21 @@ import { User } from './types';
     '[attr.title]': 'user().id',
     '[class.is-current-user]': 'isCurrentUser()',
   },
-  template: `{{ user().name }}`,
+  template: `
+    @if (isCurrentUser()) {
+      <input type="text" [value]="user().name" (change)="nameChange($any($event.target).value)" />
+    } @else {
+      {{ user().name }}
+    }
+  `,
 })
 export class UserComponent {
+  #sender = inject(SenderService);
   readonly user = input.required<User>();
   readonly isCurrentUser = input<boolean>(false);
+
+  nameChange(name: string) {
+    this.#sender.updateUser(this.user().id, name);
+    localStorage.setItem('retro_user_name', name);
+  }
 }

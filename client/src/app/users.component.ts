@@ -14,7 +14,7 @@ import { UserComponent } from './user.component';
     }
   `,
   template: `
-    Users:
+    <span>Users:</span>
     @for (user of api.users(); track user.id) {
       <ngx-user [user]="user" [isCurrentUser]="api.user()?.id === user.id" />
     }

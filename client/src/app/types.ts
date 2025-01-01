@@ -4,6 +4,7 @@ export type User = {
 };
 
 export type UserAddRequest = { type: 'user-add-request'; payload: { name: string; id?: string } };
+export type UserUpdateRequest = { type: 'user-update-request'; payload: { id: string; name: string } };
 export type BoardAddRequest = { type: 'board-add-request'; payload: { name: string } };
 export type BoardUpdateRequest = { type: 'board-update-request'; payload: { boardId: string; name: string } };
 export type BoardRemoveRequest = { type: 'board-remove-request'; payload: { id: string } };
@@ -23,9 +24,11 @@ export type RequestType =
   | BoardItemAddRequest
   | BoardItemRemoveRequest
   | BoardItemUpdateRequest
-  | BoardItemVoteRequest;
+  | BoardItemVoteRequest
+  | UserUpdateRequest;
 
 export type UserAddResponseAllResponse = { type: 'user-add-response-all-response'; payload: { id: string; name: string } };
+export type UserUpdateResponseAllResponse = { type: 'user-update-response-all-response'; payload: { id: string; name: string } };
 export type UserAddResponseCurrentResponse = {
   type: 'user-add-response-current-response';
   payload: { id: string; name: string; users: User[]; boards: Board[] };
@@ -52,7 +55,8 @@ export type ResponseType =
   | BoardItemAddResponse
   | BoardItemUpdateResponse
   | BoardItemRemoveResponse
-  | BoardItemVoteResponse;
+  | BoardItemVoteResponse
+  | UserUpdateResponseAllResponse;
 
 export type BoardItemType = 'actionPoint' | 'improvement' | 'keepDoing';
 

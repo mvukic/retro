@@ -14,6 +14,10 @@ export class UsersRepositoryMemory implements UsersRepository {
     );
   }
 
+  async updateUser(id: string, name: string): Promise<void> {
+    this.#perUserId.get(id)!.name = name;
+  }
+
   async getSocketForUser(id: string): Promise<WebSocket | undefined> {
     return this.#perUserId.get(id)?.socket;
   }
