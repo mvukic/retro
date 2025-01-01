@@ -7,7 +7,7 @@ const boards = new BoardsDatabaseMemory();
 const users = new UsersRepositoryMemory();
 const handler = new ApiHandler(boards, users);
 
-Deno.serve((req) => {
+Deno.serve( { port: 8080 }, (req) => {
   if (req.headers.get("upgrade") != "websocket") {
     return new Response(null, { status: 501 });
   }

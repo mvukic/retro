@@ -6,7 +6,7 @@ export class ApiService {
   #ws: WebSocket | null = null;
 
   connect() {
-    this.#ws = new WebSocket('ws://localhost:8000');
+    this.#ws = new WebSocket('ws://localhost:8080');
   }
 
   onOpen(fn: () => void) {
