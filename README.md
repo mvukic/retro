@@ -25,3 +25,5 @@ podman run -p 8080:80 retro:1.0
 - [x] Rename board item
 - [x] Vote board item - each user has one vote per board item
 - [x] Export board in multiple formats: JSON, CSV, text
+- [ ] Dynamically set the number of votes per user
+- [ ] Save boards into database and not in memory
