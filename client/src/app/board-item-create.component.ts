@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { BoardItem, BoardItemType } from './types';
 import { StateService } from './state.service';
 import { FormsModule } from '@angular/forms';
@@ -30,7 +30,7 @@ import { SenderService } from './sender.service';
   template: `
     <textarea cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="10" placeholder="Add content ..." [(ngModel)]="content"></textarea>
     <div class="actions">
-      <button (click)="save()">Save</button>
+      <button (click)="save()" [disabled]="!hasContent()">Save</button>
     </div>
   `,
 })
@@ -43,6 +43,7 @@ export class BoardItemCreateComponent {
   readonly item = input<BoardItem>();
 
   protected readonly content = signal('');
+  protected readonly hasContent = computed(() => this.content().length > 0);
 
   save() {
     this.#sender.addBoardItem(this.#boardId, this.content(), this.type());

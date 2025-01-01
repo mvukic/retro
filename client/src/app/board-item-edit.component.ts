@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, linkedSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal } from '@angular/core';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { StateService } from './state.service';
 import { BoardItem } from './types';
@@ -34,15 +34,9 @@ import { BoardItemVoteComponent } from './board-item-vote.component';
   `,
   template: `
     <div>
-      <textarea
-        cdkTextareaAutosize
-        cdkAutosizeMinRows="5"
-        cdkAutosizeMaxRows="10"
-        placeholder="Add content ..."
-        [(ngModel)]="copy().content"
-      ></textarea>
+      <textarea cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="10" placeholder="Add content ..." [(ngModel)]="content"></textarea>
       <div class="actions">
-        <button (click)="update()">Update</button>
+        <button (click)="update()" [disabled]="!hasContent()">Update</button>
         <button (click)="delete()">Delete</button>
         <div style="flex: 1"></div>
       </div>
@@ -56,10 +50,14 @@ export class BoardItemEditComponent {
   protected readonly boardId = this.#state.selectedBoardId()!;
 
   readonly item = input.required<BoardItem>();
-  readonly copy = linkedSignal(this.item);
+  protected readonly content = linkedSignal({
+    source: this.item,
+    computation: (item) => item.content,
+  });
+  protected readonly hasContent = computed(() => this.content().length > 0);
 
   update() {
-    this.#sender.updateBoardItem(this.boardId, this.item().id, this.copy().content);
+    this.#sender.updateBoardItem(this.boardId, this.item().id, this.content());
   }
 
   delete() {

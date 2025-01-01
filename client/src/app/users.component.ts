@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { StateService } from './state.service';
 import { UserComponent } from './user.component';
 
@@ -29,12 +29,11 @@ import { UserComponent } from './user.component';
   `,
   template: `
     <span>Users:</span>
-    @for (user of users(); track user.id) {
+    @for (user of api.users(); track user.id) {
       <ngx-user [user]="user" [isCurrentUser]="api.user()?.id === user.id" />
     }
   `,
 })
 export class UsersComponent {
   protected api = inject(StateService);
-  protected readonly users = computed(() => this.api.users().toSorted((a, b) => b.name.localeCompare(a.name)));
 }
