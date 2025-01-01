@@ -5,10 +5,10 @@
 
 # Server
 ```shell
-deno task dev
+deno task start
 ```
 
-# Container
+# Container - WIP
 ```shell
 podman build --tag retro:1.0 -f Dockerfile
 podman run -p 8080:80 retro:1.0
