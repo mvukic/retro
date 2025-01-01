@@ -5,6 +5,10 @@ import { SenderService } from './sender.service';
 @Component({
   selector: 'ngx-user',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.title]': 'user().id',
+    '[class.is-current-user]': 'isCurrentUser()',
+  },
   styles: `
     :host {
       border: 1px solid black;
@@ -29,10 +33,6 @@ import { SenderService } from './sender.service';
       }
     }
   `,
-  host: {
-    '[attr.title]': 'user().id',
-    '[class.is-current-user]': 'isCurrentUser()',
-  },
   template: `
     @if (isCurrentUser()) {
       <input type="text" [value]="user().name" (change)="nameChange($any($event.target).value)" />
